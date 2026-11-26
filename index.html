@@ -82,7 +82,7 @@ footer a{color:var(--accent)}
 
     <label class="f" for="sales">今回の売上の見込み</label>
     <div class="row"><input type="number" id="sales" min="0.01" step="0.01" inputmode="decimal"><span class="unit">億円</span></div>
-    <p class="hint">キャリーオーバーと売上の初期値は、第1660回（2026年10月11日発表）の結果から入れてあります。売上は最近の回の目安です。キャリーオーバーが大きい回や、中止が話題になった回は増えます。</p>
+    <p class="hint">キャリーオーバーと売上の初期値は、第1673回（2026年11月21日発表）の結果から入れてあります。売上は最近の回の目安です。キャリーオーバーが大きい回や、中止が話題になった回は増えます。</p>
 
     <label class="f">中止になった試合の数</label>
     <div class="seg" id="cancel"></div>
@@ -130,9 +130,9 @@ footer a{color:var(--accent)}
 <script>
 'use strict';
 const PRODUCTS = {
-  big:   {name:'BIG',      games:14, ch:3, price:300, first:0.80, capC:6,  capN:3, minGames:10, carry:46.07, sales:7.64},
-  mega:  {name:'MEGA BIG', games:12, ch:4, price:300, first:0.70, capC:12, capN:7, minGames:8,  carry:87.93, sales:5.98},
-  big100:{name:'100円BIG', games:14, ch:3, price:100, first:0.76, capC:2,  capN:1, minGames:10, carry:17.20, sales:3.40}
+  big:   {name:'BIG',      games:14, ch:3, price:300, first:0.80, capC:6,  capN:3, minGames:10, carry:51.05, sales:6.88},
+  mega:  {name:'MEGA BIG', games:12, ch:4, price:300, first:0.70, capC:12, capN:7, minGames:8,  carry:103.86, sales:5.97},
+  big100:{name:'100円BIG', games:14, ch:3, price:100, first:0.76, capC:2,  capN:1, minGames:10, carry:11.20, sales:3.32}
 };
 const OKU = 1e8, KEY = 'bigev_v1';
 const $ = id => document.getElementById(id);
