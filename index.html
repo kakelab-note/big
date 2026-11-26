@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BIG期待値計算機｜キャリーオーバーと試合中止で、1口いくら戻る？</title>
+<meta name="description" content="スポーツくじBIG・MEGA BIG・100円BIGの期待値を、キャリーオーバー・売上・中止試合数から計算する無料ツール。1口あたりの期待値と還元率、1等の当せん者数の見込みがすぐ分かります。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="BIG期待値計算機">
+<meta property="og:description" content="キャリーオーバーと試合中止で、BIGの1口はいくらの価値になる？ 登録不要・無料。">
+<meta name="twitter:card" content="summary">
+<style>
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --ink:#1f2328; --ink2:#57606a; --muted:#8c959f;
+  --line:#d8dee4; --grid:#eaeef2; --accent:#2f6f9f; --accent-soft:#e3eef6;
+  --good:#1a7f37; --bad:#c0392b; --bad-soft:#fbe9e7; --bad-strong:#f4d2cc; --warn:#9a6700; --warn-soft:#fff4d6;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#16181c; --surface:#1f2228; --ink:#e6e8eb; --ink2:#a9b1ba; --muted:#7d8590;
+    --line:#353a42; --grid:#2a2e35; --accent:#6aaee0; --accent-soft:#1d3346;
+    --good:#4cc26a; --bad:#ff7b6b; --bad-soft:#3a2220; --bad-strong:#5a2a24; --warn:#e3b341; --warn-soft:#3a3016;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;font-size:15px;line-height:1.6}
+header{padding:20px 16px 8px;max-width:1100px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--ink2);font-size:13px;margin:0}
+main{max-width:1100px;margin:0 auto;padding:8px 16px 40px;display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+main>section{min-width:0}
+@media (max-width:820px){main{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.card h2{font-size:16px;margin:0 0 10px}
+label.f{display:block;margin:12px 0 0;font-size:14px;font-weight:600}
+label.f small{font-weight:400;color:var(--ink2)}
+.row{display:flex;align-items:center;gap:6px;margin-top:4px}
+input[type=number]{width:100%;font-size:16px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.unit{white-space:nowrap;color:var(--ink2)}
+.seg{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:52px;padding:8px 4px;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.hint{font-size:12px;color:var(--muted);margin:4px 0 0}
+.lnk{background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;padding:0;text-decoration:underline}
+.big{font-size:40px;font-weight:800;line-height:1.2;margin:4px 0}
+.big small{font-size:18px;font-weight:600;color:var(--ink2);margin-left:6px}
+.badge{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.badge.over{background:var(--bad-soft);color:var(--bad)}
+.over-text{color:var(--bad)}
+dl.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:14px 0 0;font-size:14px}
+dl.kv dt{color:var(--ink2)} dl.kv dd{margin:0;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+table.hm{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+table.hm th,table.hm td{border:1px solid var(--grid);padding:7px 4px;text-align:center}
+table.hm th{background:var(--accent-soft);font-weight:700;font-size:13px}
+table.hm td.o{background:var(--bad-soft);color:var(--bad);font-weight:700}
+table.hm td.oo{background:var(--bad-strong);color:var(--bad);font-weight:800}
+table.hm td.cur{outline:3px solid var(--accent);outline-offset:-3px}
+table.hm td small{display:block;font-size:11px;color:var(--muted);font-weight:400}
+.note{font-size:13px;color:var(--ink2)}
+.note li{margin:3px 0}
+.warnbox{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:10px 12px;font-size:13px;margin-top:12px}
+footer{max-width:1100px;margin:0 auto;padding:8px 16px 32px;font-size:13px;color:var(--ink2)}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>BIG期待値計算機</h1>
+  <p class="sub">キャリーオーバー・売上・中止になった試合の数から、スポーツくじ（BIG・MEGA BIG・100円BIG）の1口あたりの期待値を計算します。</p>
+</header>
+<main>
+<section>
+  <div class="card">
+    <h2>入力</h2>
+    <label class="f">くじの種類</label>
+    <div class="seg" id="prod"></div>
+    <p class="hint" id="prodInfo"></p>
+
+    <label class="f" for="carry">前回からのキャリーオーバー <small>（公式サイトや販売サイトに表示）</small></label>
+    <div class="row"><input type="number" id="carry" min="0" step="0.01" inputmode="decimal"><span class="unit">億円</span></div>
+
+    <label class="f" for="sales">今回の売上の見込み</label>
+    <div class="row"><input type="number" id="sales" min="0.01" step="0.01" inputmode="decimal"><span class="unit">億円</span></div>
+    <p class="hint">キャリーオーバーと売上の初期値は、第1660回（2026年10月11日発表）の結果から入れてあります。売上は最近の回の目安です。キャリーオーバーが大きい回や、中止が話題になった回は増えます。</p>
+
+    <label class="f">中止になった試合の数</label>
+    <div class="seg" id="cancel"></div>
+    <p class="hint" id="cancelInfo"></p>
+
+    <label class="f" for="cap">1等の1口あたりの上限 <button type="button" class="lnk" id="capReset">標準に戻す</button></label>
+    <div class="row"><input type="number" id="cap" min="0.01" step="0.01" inputmode="decimal"><span class="unit">億円</span></div>
+    <p class="hint">期間限定で上限が変わる回は、ここを書き換えてください。</p>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>1口あたりの期待値</h2>
+    <div class="big" id="ev"></div>
+    <span class="badge" id="evBadge"></span>
+    <dl class="kv" id="kv"></dl>
+    <div class="warnbox" id="warn" hidden></div>
+  </div>
+
+  <div class="card">
+    <h2>中止の数 × 売上ごとの期待値</h2>
+    <p class="note" style="margin-top:0">キャリーオーバーと1等の上限は、いま入力した値のまま。<span class="over-text">赤いマス</span>は期待値が1口の値段を超える組み合わせ、青い枠が今の入力です。</p>
+    <div style="overflow-x:auto"><table class="hm" id="hm"></table></div>
+  </div>
+
+  <div class="card">
+    <h2>計算のしかた</h2>
+    <ul class="note">
+      <li>当せん金は売上の50%。そのうち1等の割合（BIG 80%、MEGA BIG 70%、100円BIG 76%）に、前回からのキャリーオーバーを足したものが1等の配当金総額です。</li>
+      <li>中止になった試合は、どの予想も「的中」扱い。1試合中止になるごとに、1等の確率はBIG・100円BIGで3倍、MEGA BIGで4倍になります。</li>
+      <li>1等の当せん口数は、確率（ポアソン分布）で見込みを出しています。1口あたりの当せん金は上限で止まり、払いきれなかった分と1等が出なかった回の分は、次の回に持ち越されます。</li>
+      <li>2等以下は、配分された額がその回で全部払い出されると仮定しています。</li>
+      <li>コンピュータが数字を選ぶBIG系は、どの1口も当たる確率が同じなので、期待値をこの方法で計算できます。</li>
+    </ul>
+    <ul class="note">
+      <li>この計算は目安です。実際の当せん金は、売上と当せん口数で決まり、2等以下の扱いなど細かいルールで変わることがあります。最新の情報はスポーツくじ公式サイトで確認してください。</li>
+      <li>くじの購入を勧めたり、控えるよう勧めたりするものではありません。スポーツくじは19歳未満は購入できません。</li>
+    </ul>
+  </div>
+</section>
+</main>
+<footer>作成：かけラボ｜家計と期待値の計算室（<a href="https://note.com/kake_lab">note</a>）。入力内容はこの端末のブラウザ内にだけ保存され、外部には送信されません。</footer>
+
+<script>
+'use strict';
+const PRODUCTS = {
+  big:   {name:'BIG',      games:14, ch:3, price:300, first:0.80, capC:6,  capN:3, minGames:10, carry:46.07, sales:7.64},
+  mega:  {name:'MEGA BIG', games:12, ch:4, price:300, first:0.70, capC:12, capN:7, minGames:8,  carry:87.93, sales:5.98},
+  big100:{name:'100円BIG', games:14, ch:3, price:100, first:0.76, capC:2,  capN:1, minGames:10, carry:17.20, sales:3.40}
+};
+const OKU = 1e8, KEY = 'bigev_v1';
+const $ = id => document.getElementById(id);
+let st = {prod:'big', carry:null, sales:null, cancel:0, cap:null, capEdited:false};
+
+function lgamma(n){ // log((n-1)!) for integer n>=1 via sum (n is small here)
+  let s = 0; for (let i = 2; i < n; i++) s += Math.log(i); return s;
+}
+// 1等の払い出し総額の期待値 E[min(P, M*W)], W ~ Poisson(lam)
+function firstPayout(P, M, lam){
+  if (P <= 0) return 0;
+  // E[min(P,MW)] = P - Σ_{w: Mw<P} Pr(W=w)(P - Mw)
+  let short = 0;
+  const wmax = Math.ceil(P / M) - 1;
+  for (let w = 0; w <= wmax; w++){
+    const lp = -lam + (w ? w * Math.log(lam) : 0) - lgamma(w + 1);
+    short += Math.exp(lp) * (P - M * w);
+  }
+  return P - short;
+}
+function calc(prodKey, carryOku, salesOku, k, capOku){
+  const p = PRODUCTS[prodKey];
+  const S = salesOku * OKU, N = S / p.price, C = carryOku * OKU, M = capOku * OKU;
+  const p1 = Math.pow(1 / p.ch, p.games - k);
+  const lam = N * p1;
+  const P = C + 0.5 * p.first * S;
+  const E1 = firstPayout(P, M, lam);
+  const lower = 0.5 * (1 - p.first) * S;
+  const ev = (lower + E1) / N;
+  return {ev, rate: ev / p.price, p1, lam, P, E1, lower, N, S, M, pAny: 1 - Math.exp(-lam),
+          perWinner: Math.min(P / Math.max(lam, 1), M), carryNext: P - E1};
+}
+const yen = v => Math.round(v).toLocaleString('ja-JP') + '円';
+const oku = v => (v / OKU >= 100 ? Math.round(v / OKU).toLocaleString('ja-JP') : (Math.round(v / OKU * 100) / 100).toLocaleString('ja-JP')) + '億円';
+function bigYen(v){ return v >= OKU ? oku(v) : v >= 1e4 ? (Math.round(v / 1e3) / 10).toLocaleString('ja-JP') + '万円' : yen(v); }
+function odds(p){ const x = 1 / p; return '約' + (x >= 1e4 ? (Math.round(x / 1e3) / 10).toLocaleString('ja-JP') + '万' : Math.round(x).toLocaleString('ja-JP')) + '分の1'; }
+
+function defaultCap(){ const p = PRODUCTS[st.prod]; return st.carry > 0 ? p.capC : p.capN; }
+
+function buildButtons(){
+  $('prod').innerHTML = Object.entries(PRODUCTS).map(([k, p]) => `<button type="button" data-k="${k}">${p.name}</button>`).join('');
+  $('cancel').innerHTML = [0,1,2,3,4].map(k => `<button type="button" data-k="${k}">${k}試合</button>`).join('');
+  $('prod').onclick = e => { const k = e.target.dataset.k; if (!k) return;
+    st.prod = k; const p = PRODUCTS[k]; st.carry = p.carry; st.sales = p.sales; st.capEdited = false; st.cap = defaultCap(); sync(); };
+  $('cancel').onclick = e => { const k = e.target.dataset.k; if (k == null) return; st.cancel = +k; sync(); };
+}
+function sync(){
+  const p = PRODUCTS[st.prod];
+  [...$('prod').children].forEach(b => b.classList.toggle('on', b.dataset.k === st.prod));
+  [...$('cancel').children].forEach(b => b.classList.toggle('on', +b.dataset.k === st.cancel));
+  $('prodInfo').textContent = `1口${p.price}円・${p.games}試合。1等の確率は通常${odds(Math.pow(1/p.ch, p.games))}。1等の上限はキャリーオーバーがある回${p.capC}億円・ない回${p.capN}億円。`;
+  $('cancelInfo').textContent = `${p.games}試合中${p.minGames}試合が成立すればくじは成立。${p.games - p.minGames + 1}試合以上中止になると不成立で、代金が返ってきます。`;
+  $('carry').value = st.carry; $('sales').value = st.sales; $('cap').value = st.cap;
+  render(); save();
+}
+function readInputs(){
+  st.carry = Math.max(0, parseFloat($('carry').value) || 0);
+  st.sales = Math.max(0.01, parseFloat($('sales').value) || 0.01);
+  if (!st.capEdited) { st.cap = defaultCap(); $('cap').value = st.cap; }
+  else st.cap = Math.max(0.01, parseFloat($('cap').value) || defaultCap());
+  render(); save();
+}
+function render(){
+  const p = PRODUCTS[st.prod];
+  const r = calc(st.prod, st.carry, st.sales, st.cancel, st.cap);
+  const over = r.ev > p.price;
+  $('ev').innerHTML = `${yen(r.ev)}<small>／1口${p.price}円</small>`;
+  $('ev').className = 'big' + (over ? ' over-text' : '');
+  $('evBadge').textContent = `還元率 ${(r.rate * 100).toFixed(0)}%` + (over ? '（買った額を上回る）' : '');
+  $('evBadge').className = 'badge' + (over ? ' over' : '');
+  const n10k = Math.floor(10000 / p.price);
+  $('kv').innerHTML = [
+    ['1等の確率', odds(r.p1)],
+    ['1等の当せん口数の見込み', (r.lam < 10 ? r.lam.toFixed(2) : Math.round(r.lam).toLocaleString('ja-JP')) + '口'],
+    ['1等が1口以上出る確率', (r.pAny * 100).toFixed(r.pAny > 0.995 ? 1 : 0) + '%'],
+    ['1等の配当金総額', oku(r.P)],
+    ['1等1口あたりの当せん金の目安', bigYen(r.perWinner)],
+    ['次の回へ持ち越される見込み', oku(Math.max(0, r.carryNext))],
+    ['期待値のうち1等の分', yen(r.E1 / r.N)],
+    ['期待値のうち2等以下の分', yen(r.lower / r.N)],
+    [`1万円分（${n10k}口）買ったときの平均`, yen(r.ev * n10k)]
+  ].map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
+  const w = $('warn');
+  if (st.cancel > 0 && st.carry > 0 && over) {
+    w.hidden = false;
+    w.textContent = '中止が分かると買う人が増え、売上が増えるほど期待値は下がります。下の表で、売上が増えた場合も確認してください。';
+  } else if (st.carry === 0 && st.cancel === 0) {
+    w.hidden = false;
+    w.textContent = 'キャリーオーバーがない回は、1等が出なければ1等の分は次の回に持ち越されるため、この回だけで見た期待値は低くなります。';
+  } else w.hidden = true;
+  // heatmap
+  const mults = [1, 2, 3, 5, 10];
+  let h = '<tr><th>中止＼売上</th>' + mults.map(m => `<th>${m === 1 ? '入力どおり' : m + '倍'}<small style="display:block;font-weight:400">${(Math.round(st.sales * m * 100) / 100).toLocaleString('ja-JP')}億円</small></th>`).join('') + '</tr>';
+  for (let k = 0; k <= 4; k++){
+    h += `<tr><th>${k}試合</th>`;
+    for (const m of mults){
+      const x = calc(st.prod, st.carry, st.sales * m, k, st.cap);
+      const cls = (x.ev > p.price * 3 ? 'oo' : x.ev > p.price ? 'o' : '') + (k === st.cancel && m === 1 ? ' cur' : '');
+      h += `<td class="${cls}">${yen(x.ev)}<small>${(x.rate * 100).toFixed(0)}%</small></td>`;
+    }
+    h += '</tr>';
+  }
+  $('hm').innerHTML = h;
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+function load(){
+  let o = null; try { o = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+  const p = PRODUCTS[(o && PRODUCTS[o.prod]) ? o.prod : 'big'];
+  st = Object.assign({prod:'big', carry:p.carry, sales:p.sales, cancel:0, cap:null, capEdited:false}, o || {});
+  if (!PRODUCTS[st.prod]) st.prod = 'big';
+  if (st.cap == null) st.cap = defaultCap();
+}
+buildButtons(); load();
+['carry', 'sales'].forEach(id => $(id).addEventListener('input', readInputs));
+$('cap').addEventListener('input', () => { st.capEdited = true; readInputs(); });
+$('capReset').onclick = () => { st.capEdited = false; readInputs(); };
+sync();
+</script>
+</body>
+</html>
